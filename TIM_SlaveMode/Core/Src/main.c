@@ -64,15 +64,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   if (htim->Instance == TIM2) {
     // This callback is called every time TIM2 overflows
     // You can add code here to handle the timer event
-    if (__HAL_TIM_GET_FLAG(htim, TIM_FLAG_UPDATE) != RESET) {
-      __HAL_TIM_CLEAR_FLAG(htim, TIM_FLAG_UPDATE);
-      // Timer update event occurred
-      HAL_UART_Transmit(&hlpuart1, (uint8_t*)triggermsg, strlen(triggermsg), 100);
-    }
-    else 
-    {
     HAL_UART_Transmit(&hlpuart1, (uint8_t*)updatemsg, strlen(updatemsg), 100);
-    }
     }
     
 }
@@ -110,6 +102,7 @@ int main(void)
   MX_LPUART1_UART_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
+  __HAL_TIM_CLEAR_FLAG(&htim2, TIM_FLAG_UPDATE);
   HAL_TIM_Base_Start_IT(&htim2);
   int counter = 0;
   char message[20]= "";
@@ -119,6 +112,11 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    if (__HAL_TIM_GET_FLAG(&htim2, TIM_FLAG_UPDATE) != RESET) {
+      __HAL_TIM_CLEAR_FLAG(&htim2, TIM_FLAG_UPDATE);
+      // Timer update event occurred
+      HAL_UART_Transmit(&hlpuart1, (uint8_t*)triggermsg, strlen(triggermsg), 100);
+    }
     counter = __HAL_TIM_GET_COUNTER(&htim2);
     sprintf(message, "Counter: %d", counter);
     HAL_UART_Transmit(&hlpuart1, (uint8_t*)message, strlen(message), 100);
