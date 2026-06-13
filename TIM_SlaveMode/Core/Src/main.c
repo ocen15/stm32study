@@ -120,7 +120,7 @@ int main(void)
     counter = __HAL_TIM_GET_COUNTER(&htim2);
     sprintf(message, "Counter: %d", counter);
     HAL_UART_Transmit(&hlpuart1, (uint8_t*)message, strlen(message), 100);
-    HAL_Delay(1000);
+    HAL_Delay(500);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
