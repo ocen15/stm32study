@@ -18,11 +18,11 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "stm32g4xx_hal_uart.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -43,14 +43,19 @@
 
 /* Private variables ---------------------------------------------------------*/
 UART_HandleTypeDef hlpuart1;
+DMA_HandleTypeDef hdma_lpuart1_tx;
+DMA_HandleTypeDef hdma_lpuart1_rx;
 
 /* USER CODE BEGIN PV */
-uint8_t received_data[2];
+uint8_t received_data[UART_RX_BUFFER_SIZE];
+uint8_t transmit_data[UART_RX_BUFFER_SIZE];
+volatile uint16_t transmit_length;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_LPUART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -58,10 +63,38 @@ static void MX_LPUART1_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+static void UART_StartReceiveToIdleDMA(void)
 {
-HAL_UART_Transmit_IT(&hlpuart1, received_data, 2);
- HAL_UART_Receive_IT(&hlpuart1, received_data, 2);
+  if (HAL_UARTEx_ReceiveToIdle_DMA(&hlpuart1,
+                                   received_data,
+                                   UART_RX_BUFFER_SIZE) == HAL_OK)
+  {
+    __HAL_DMA_DISABLE_IT(hlpuart1.hdmarx, DMA_IT_HT);
+  }
+}
+
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
+{
+  if ((huart == &hlpuart1) && (Size > 0U))
+  {
+    transmit_length = (Size <= UART_RX_BUFFER_SIZE) ? Size : UART_RX_BUFFER_SIZE;
+    memcpy(transmit_data, received_data, transmit_length);
+
+    if (HAL_UART_Transmit_DMA(&hlpuart1,
+                              transmit_data,
+                              transmit_length) != HAL_OK)
+    {
+      UART_StartReceiveToIdleDMA();
+    }
+  }
+}
+
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+  if (huart == &hlpuart1)
+  {
+    UART_StartReceiveToIdleDMA();
+  }
 }
 /* USER CODE END 0 */
 
@@ -94,12 +127,13 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_LPUART1_UART_Init();
   /* USER CODE BEGIN 2 */
   printf("\r\nUART Printf Example: retarget the C library printf function to the UART\r\n");
   printf("** Test finished successfully. **\r\n");
 
-  HAL_UART_Receive_IT(&hlpuart1, received_data, 2);
+  UART_StartReceiveToIdleDMA();
    
   /* USER CODE END 2 */
 
@@ -112,27 +146,6 @@ int main(void)
     /* USER CODE BEGIN 3 */
       //HAL_UART_Receive(&hlpuart1, received_data, 2, HAL_MAX_DELAY);
      
-
-    /*if ((uart_tx_busy == 0U) && (uart_rx_tail != uart_rx_head))
-    {
-      if (uart_rx_head > uart_rx_tail)
-      {
-        uart_tx_length = uart_rx_head - uart_rx_tail;
-      }
-      else
-      {
-        uart_tx_length = UART_RX_BUFFER_SIZE - uart_rx_tail;
-      }
-
-      uart_tx_busy = 1U;
-      if (HAL_UART_Transmit_IT(&hlpuart1,
-                               &uart_rx_buffer[uart_rx_tail],
-                               uart_tx_length) != HAL_OK)
-      {
-        uart_tx_busy = 0U;
-        uart_tx_length = 0U;
-      }
-    }*/
   }
   /* USER CODE END 3 */
 }
@@ -227,6 +240,26 @@ static void MX_LPUART1_UART_Init(void)
   /* USER CODE BEGIN LPUART1_Init 2 */
 
   /* USER CODE END LPUART1_Init 2 */
+
+}
+
+/**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMAMUX1_CLK_ENABLE();
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Channel1_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
+  /* DMA1_Channel2_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel2_IRQn);
 
 }
 
