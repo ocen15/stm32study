@@ -58,13 +58,23 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 char updatemsg[] = "Timer Updated\r\n";
+char triggermsg[] = "Timer Triggered\r\n";
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   if (htim->Instance == TIM2) {
     // This callback is called every time TIM2 overflows
     // You can add code here to handle the timer event
+    if (__HAL_TIM_GET_FLAG(htim, TIM_FLAG_UPDATE) != RESET) {
+      __HAL_TIM_CLEAR_FLAG(htim, TIM_FLAG_UPDATE);
+      // Timer update event occurred
+      HAL_UART_Transmit(&hlpuart1, (uint8_t*)triggermsg, strlen(triggermsg), 100);
+    }
+    else 
+    {
     HAL_UART_Transmit(&hlpuart1, (uint8_t*)updatemsg, strlen(updatemsg), 100);
-  }
+    }
+    }
+    
 }
 /* USER CODE END 0 */
 
