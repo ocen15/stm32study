@@ -1,0 +1,5 @@
+C:/Users/PC/Desktop/32cmake/uart/Core/Src/main.c:113:6:SystemClock_Config	88	static,ignoring_inline_asm
+C:/Users/PC/Desktop/32cmake/uart/Core/Src/main.c:66:5:main	16	static,ignoring_inline_asm
+C:/Users/PC/Desktop/32cmake/uart/Core/Src/main.c:223:5:__io_putchar	16	static
+C:\Users\PC\AppData\Local\stm32cube\bundles\gnu-tools-for-stm32\14.3.1+st.2\bin\../lib/gcc/arm-none-eabi/14.3.1/../../../../arm-none-eabi/include/stdio.h:220:5:fputc	0	static
+C:/Users/PC/Desktop/32cmake/uart/Core/Src/main.c:240:6:Error_Handler	0	static,ignoring_inline_asm

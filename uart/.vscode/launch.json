@@ -1,0 +1,38 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "STM32Cube: Debug ST-LINK GDB Server",
+            "type": "stlinkgdbtarget",
+            "request": "launch",
+            "origin": "manual",
+            "cwd": "${workspaceFolder}",
+            "gdb": "C:/Users/PC/AppData/Local/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-gdb.exe",
+            "deviceName": "STM32G474RET6",
+            "deviceCore": "Cortex-M4",
+            "preBuild": "${command:st-stm32-ide-debug-launch.build}",
+            "imagesAndSymbols": [
+                {
+                    "imageFileName": "${workspaceFolder}/build/Debug/uart.elf",
+                    "symbolFileName": "${workspaceFolder}/build/Debug/uart.elf"
+                }
+            ],
+            "serverExe": "ST-LINK_gdbserver.exe",
+            "serverCwd": "C:/Users/PC/AppData/Local/stm32cube/bundles/stlink-gdbserver/7.13.0+st.3/bin",
+            "serverCubeProgPath": "C:/Users/PC/AppData/Local/stm32cube/bundles/programmer/2.22.0+st.1/bin",
+            "serverInterface": "SWD",
+            "serverInterfaceFrequency": "1000",
+            "serverPort": "61234",
+            "serverVerify": false,
+            "serverReset": "Connect under reset",
+            "serverRtos": {
+                "enabled": false
+            },
+            "serverSemihosting": {
+                "enabled": false
+            },
+            "automaticallyKillServer": true,
+            "openGdbConsole": false
+        }
+    ]
+}
