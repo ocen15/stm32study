@@ -22,6 +22,6 @@
 293	853	8026147752605689	cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_dma.c.obj	2e112a20d1cfabed
 394	886	8026147753611055	cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_cortex.c.obj	7febd50540830c83
 241	415	8029682663600252	uart.elf	a5cd43af3f16dc8c
-2	178	8030389462177276	build.ninja	b4f71d1f902134b6
-2	178	8030389462096905	C:/Users/PC/Desktop/32cmake/uart/build/Debug/cmake_install.cmake	b4f71d1f902134b6
-2	178	8030389462117937	C:/Users/PC/Desktop/32cmake/uart/build/Debug/cmake/stm32cubemx/cmake_install.cmake	b4f71d1f902134b6
+2	178	8030472764050200	build.ninja	b4f71d1f902134b6
+2	178	8030472763942048	C:/Users/PC/Desktop/32cmake/uart/build/Debug/cmake_install.cmake	b4f71d1f902134b6
+2	178	8030472763972053	C:/Users/PC/Desktop/32cmake/uart/build/Debug/cmake/stm32cubemx/cmake_install.cmake	b4f71d1f902134b6
